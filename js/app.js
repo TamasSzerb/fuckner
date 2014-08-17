@@ -4,70 +4,26 @@
 	'use strict';
 
 	var fuckner = {
-		lines: [],
+		data: {},
 
 		init: function () {
 			var that = this;
 
-			$.ajax('data/data.txt', {
+			$.ajax('data/data.json', {
 				dataType: 'text',
-				success: function (text) {
-					that.lines = _.filter(text.split('\n'), function (line) {
-						return line.trim() !== '';
-					});
-					that.splitUrls();
-					that.sortLines();
-					that.renderLines();
+				success: function (data) {
+					that.data = JSON.parse(data);
+					that.render();
 				}
 			});
 		},
 
-		splitUrls: function() {
-			this.lines = _.map(this.lines, function(line) {
-				return {
-					text: line.replace(/https?:\/\/\S+/g, '').trim(),
-					urls: line.match(/https?:\/\/\S+/g)
-				};
-			});
-		},
-
-		sortLines: function () {
-			var plainLetters = function (s) {
-					var from = 'áéíóöőúüű',
-						to = 'aeioouuu';
-
-					s = s.replace(/<(?:.|\n)*?>/gm, '').toLowerCase();
-					return _.map(s, function (letter, i) {
-						var t = from.indexOf(s.charAt(i));
-						if (t === -1) {
-							return s.charAt(i);
-						} else {
-							return to.charAt(t) + 'x';
-						}
-					}).join('');
-				},
-				plainLines = {};
-
-			_.each(this.lines, function (line) {
-				plainLines[line.text] = plainLetters(line.text);
-			});
-
-			this.lines = this.lines.sort(function (a, b) {
-				if (plainLines[a.text] > plainLines[b.text]) {
-					return 1;
-				} else if (plainLines[a.text] < plainLines[b.text]) {
-					return -1;
-				} else {
-					return 0;
-				}
-			});
-		},
-
-		renderLines: function () {
+		render: function () {
 			var tags = 0,
-				urls = 0;
+				urls = 0,
+				that = this;
 
-			$('#because').html(_.map(this.lines, function (line) {
+			$('#because').html(_.map(this.data, function (line, topic) {
 				tags++;
 				var print = '<span class="print-only plm">' + line.text + '</span>';
 				if (line.urls === null || line.urls.length === 0) {
@@ -75,14 +31,31 @@
 				} else {
 					urls += line.urls.length;
 					if (line.urls.length > 1) {
-						return $('<span class="hide-on-print"><a href="' + line.urls[0] + '">' + line.text + '</a> ' + _.map(_.rest(line.urls), function (url, i) {
-							return '<a href="' + url + '">[&nbsp;' + (i + 2) + '&nbsp;]</a>';
-						}).join(' ') + '</span>' + print);
+						return $('<span class="hide-on-print"><a href="#" class="multi-url" data-topic="' + topic + '">' + line.text + '</a></span>' + print);
 					} else {
 						return $('<span class="hide-on-print"><a href="' + line.urls[0] + '">' + line.text + '</a></span>' + print);
 					}
 				}
 			}));
+
+			$('.multi-url').on('click', function (e) {
+				var $modal = $('#topic-modal'),
+					topicId = $(e.currentTarget).data('topic'),
+					itemTemplate = _.template($('#topic-url').html().trim());
+
+				$modal.find('.title').html(that.data[topicId].text);
+				$modal.find('.url-container').empty();
+				_.each(that.data[topicId].urls, function (url) {
+					$modal.find('.url-container').append(itemTemplate(_.extend({
+						ogTitle: url.ogUrl,
+						ogImage: '',
+						ogDescription: ''
+					}, url)));
+				});
+
+				$modal.foundation('reveal', 'open');
+				return false;
+			});
 
 			$('#tags').html(tags + ' téma');
 			$('#urls').html(urls + ' URL');

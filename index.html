@@ -40,6 +40,12 @@
 				<span><a href="http://creativecommons.org/licenses/by-nc-sa/4.0">Licenc</a></span>
 			</div>
 		</footer>
+		<div id="topic-modal" class="reveal-modal" data-reveal>
+			<h2 class="title"></h2>
+			<div class="url-container">
+			</div>
+			<a class="close-reveal-modal">&#215;</a>
+		</div>
 		<script src="bower_components/jquery/jquery.js"></script>
 		<script src="bower_components/foundation/js/foundation.min.js"></script>
 		<script src="js/lib/underscore-min.js"></script>
@@ -52,6 +58,21 @@
 
 			ga('create', 'UA-46948765-1', 'fuckner.hu');
 			ga('send', 'pageview');
+		</script>
+		<script type="text/template" id="topic-url">
+			<div class="row ptx">
+				<div class="columns large-4 pbl">
+					<% if (ogImage !== '') { %>
+					<a href="<%= ogUrl %>" target="_blank">
+						<img src="<%= ogImage %>" />
+					</a>
+					<% } %>
+				</div>
+				<div class="columns large-8">
+					<a class="link" href="<%= ogUrl %>" target="_blank"><%= ogTitle %></a><br />
+					<%= ogDescription %>
+				</div>
+			</div>
 		</script>
 	</body>
 </html>
