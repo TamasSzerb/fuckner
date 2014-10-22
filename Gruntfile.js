@@ -183,8 +183,22 @@ module.exports = function (grunt) {
 		'sass'
 	]);
 
-	grunt.registerTask('default', [
-		'build',
-		'watch'
-	]);
+	grunt.registerTask('default', function () {
+		grunt.log.writeln('Listening on port 9090, open the page in your browser: http://localhost:9090/')
+        var connect = require('connect'),
+            serveStatic = require('serve-static'),
+            app = connect();
+
+        app.use(serveStatic('.', {
+            'index': [
+                'index.html'
+            ]
+        }));
+        app.listen(9090);
+
+        grunt.task.run([
+			'build',
+			'watch'
+        ]);
+	});
 };
