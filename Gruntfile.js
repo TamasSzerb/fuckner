@@ -185,20 +185,20 @@ module.exports = function (grunt) {
 
 	grunt.registerTask('default', function () {
 		grunt.log.writeln('Listening on port 9090, open the page in your browser: http://localhost:9090/')
-        var connect = require('connect'),
-            serveStatic = require('serve-static'),
-            app = connect();
+		var connect = require('connect'),
+			serveStatic = require('serve-static'),
+			app = connect();
 
-        app.use(serveStatic('.', {
-            'index': [
-                'index.html'
-            ]
-        }));
-        app.listen(9090);
+		app.use(serveStatic('.', {
+			'index': [
+				'index.html'
+			]
+		}));
+		app.listen(9090);
 
-        grunt.task.run([
+		grunt.task.run([
 			'build',
 			'watch'
-        ]);
+		]);
 	});
 };
