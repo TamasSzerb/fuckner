@@ -14,7 +14,28 @@
 				success: function (data) {
 					that.data = JSON.parse(data);
 					that.render();
+					that.initSearch();
 				}
+			});
+		},
+
+		initSearch: function () {
+			console.log('search');
+			var search = function () {
+				var $input = $('#search input'),
+					phrase = $input.val();
+
+				$('#because span').each(function () {
+					$(this).toggle($(this).text().toLowerCase().indexOf(phrase) > -1);
+				});
+			};
+
+			$('#search input').on('keyup', search);
+
+			$('#search span').on('click', function () {
+				$('#search input').val('');
+				search();
+				$('#search input').focus();
 			});
 		},
 

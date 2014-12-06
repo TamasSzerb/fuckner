@@ -44,6 +44,22 @@
 		}
 	}
 
+	#search {
+		input {
+			font-size: 24px;
+		}
+
+		span {
+			cursor: pointer;
+			float: right;
+			top: 4px;
+			color: grey;
+			position: absolute;
+			right: 24px;
+			font-size: 26px;
+		}
+	}
+
 	h1,
 	#because {
 		border: 1px solid #545B5F;
